@@ -5,16 +5,23 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-server = 'https://download.brainimagelibrary.org/inventory/'
+server = "https://download.brainimagelibrary.org/inventory/"
 
-@app.route('/get', methods=['GET'])
+
+@app.route("/", methods=["GET"])
+def hello():
+    print(f"Hello, World!")
+
+
+@app.route("/get", methods=["GET"])
 def get():
     # Get the input string from the URL
-    filename = request.args.get('filename')
-    query = request.args.get('query')
-    
+    filename = request.args.get("filename")
+    query = request.args.get("query")
+
     # Define the URL where the JSON file is located
-    path = server + filename + '.json'
+    path = f"{server}{filename}.json"
+    print(path)
 
     # Check if the JSON file exists at the given URL
     try:
@@ -30,13 +37,17 @@ def get():
         json_dict = json.loads(json_data)
 
         # Extract the json block
-        data = json_dict[query]
-        
+        if query:
+            data = json_dict[query]
+        else:
+            data = json_dict
+
         # Save the downloaded JSON file in the app's directory
-        with open(filename + '.json', 'wb') as f:
+        with open(filename + ".json", "wb") as f:
             f.write(json_data)
- 
+
         return data
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)
